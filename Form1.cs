@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Excel;
+using objExcel = Microsoft.Office.Interop.Excel;
 
 namespace MetodoCongruencialMultiplicativo
 {
@@ -19,7 +21,7 @@ namespace MetodoCongruencialMultiplicativo
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        { 
+        {
 
         }
 
@@ -72,6 +74,40 @@ namespace MetodoCongruencialMultiplicativo
                 dataGridView1.Rows[i].Cells[Int32.Parse(numeroColumna1) - 1].Value = algoritmo.ListaNumerosAleatorios[i].ToString();
                 dataGridView1.Rows[i].Cells[Int32.Parse(numeroColumna2) - 1].Value = i.ToString();
             }
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DescargaExcel(dataGridView1);
+        }
+
+
+        public void DescargaExcel(DataGridView data)
+        {
+            Microsoft.Office.Interop.Excel.Application exportarExcel = new Microsoft.Office.Interop.Excel.Application();
+            exportarExcel.Application.Workbooks.Add(true);
+            int indiceColumna = 0;
+            // Llenar (construir) encabezados
+            foreach (DataGridViewColumn columna in data.Columns)
+            {
+                indiceColumna = indiceColumna + 1;
+                exportarExcel.Cells[1, indiceColumna] = columna.HeaderText;
+            }
+            // Llenar filas
+
+            int indiceFila = 0;
+            foreach (DataGridViewRow fila in data.Rows)
+            {
+                indiceFila++;
+                indiceColumna = 0;
+                foreach (DataGridViewColumn columna in data.Columns)
+                {
+                    indiceColumna++;
+                    exportarExcel.Cells[indiceFila + 1, indiceColumna] = fila.Cells[columna.Name].Value;
+                }
+            }
+            exportarExcel.Visible = true;
 
         }
     }
